@@ -202,10 +202,10 @@ const Cards = ({ tokenData }: {tokenData: {token: string, token_expire_time: str
                                 <span className={styles.estimatedCostIcon} >i</span>
                             </div>
                             <div className={styles.perYear}>
-                                ${item?.expected_annually_bill_amount.toString()}^<sub style={{color:"grey"}}>/yr</sub>
+                                ${item?.expected_annually_bill_amount.toString()}^<span className={styles.smallText}>/yr</span>
                             </div>
                             <div className={styles.perMonth}>
-                                ${item?.expected_monthly_bill_amount.toString()}<span style={{color:"grey", fontSize:"12px"}}>/mo</span>
+                                ${item?.expected_monthly_bill_amount.toString()}<span className={styles.smallText}>/mo</span>
                             </div>
                         </div>    
                     </div>
