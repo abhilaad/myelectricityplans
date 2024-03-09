@@ -73,3 +73,9 @@
 .headerSummary{
     padding-left: 5px;
 }
+
+@media only screen and (max-width: 768px){
+    .leftSection{
+        padding: 5px;
+    }
+}

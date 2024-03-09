@@ -3,7 +3,7 @@ import Image from 'next/image'
 import styles from "./Card.module.css"
 import ConnectOnlineButton from './ConnectOnlineButton'
 import React, { useState, useEffect } from 'react'
-import Header from '../Header/Header'
+import Header from '../header/Header'
 
 interface ElectricityData {
     id: Number;
