@@ -15,7 +15,7 @@
 }
 
 .leftSection{
-    background-color: blue;
+    background-color: darkblue;
     color: white;
     border-radius: 10px;
     width: auto;
@@ -32,7 +32,7 @@
     display: inline-block;
     border-radius: 50%;
     background-color: white;
-    color: blue;
+    color: darkblue;
     font-weight: bolder;
     text-align: center;
     padding: 1px;
@@ -50,7 +50,7 @@
 
 .filterButton{
     width: auto;
-    background-color: blue;
+    background-color: darkblue;
     color: white;
     font-weight: 500;
     font-size: 18px;
