@@ -1,0 +1,198 @@
+.shimmer{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    font-size: 28px;
+    font-weight: bolder;
+    background-color: #cad1fa;
+}
+.cardContainer{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    border: 3px solid #eee;
+    padding: 5px;
+    position: relative;
+    margin-top: 20px
+}
+
+.rowContainerOne{
+    display: flex;
+    width: 100%;
+}
+
+.rowContainerTwo{
+    width: 100%;
+    padding: 15px 5px 15px 5px;
+}
+
+.rowContainerThree{
+    display: flex;
+    width: 100%;
+    background-color: #e6e8e6;    
+}
+
+.sectionOne{
+    width: 25vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.sectionTwo{
+    width: 55vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-top: 20px;
+}
+
+.sectionThree{
+    width: 20vw;
+    padding: 20px;
+}
+
+.electricityLegend{
+    position: absolute;
+    top:-20px;
+    left:20px;
+    z-Index: 4;
+    background: #e6e8e6;
+    border-radius: 4px;
+    padding: 5px 10px;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+}
+
+.solarLegend{
+    position: absolute;
+    top:-20px;
+    left:160px;
+    z-Index: 4;
+    background: #e6e8e6;
+    border-radius: 4px;
+    padding: 5px 10px;
+    display: flex;
+    align-items: center;
+    font-size: 14px;  
+}
+
+.refPrice{
+    background-color: #e6e8e6;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+.planContainer{
+    display: flex;
+    max-width: 500px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.textWrapper{
+    min-width: 200px;
+    padding: 3px 5px;
+    list-style-type: none;
+    text-align: center;
+}
+
+.estimatedCostContainer{
+    /* height: 120px; */
+    /* width: 200px; */
+    background: #cbf2f2;
+    border-radius: 5px;    
+    cursor: pointer;
+}
+
+.estimatedCostTitle{
+    background-color: #165d8a;
+    color: white;
+    /* height: 35px; */
+    padding: 10px
+}
+
+.estimatedCostIcon{
+    width: 14px;
+    height: 14px;
+    display: inline-block;
+    border-radius: 50%;
+    background-color: white;
+    color:#165d8a;
+    font-weight: bolder;
+    text-align: center;
+    padding: 1px;
+}
+
+.perYear{
+    padding: 10px 0px 0px 10px;
+    font-size: 24px;
+    font-weight: bolder;
+    color: #04168a;
+}
+
+.perMonth{
+    padding: 10px 0px 10px 10px;
+    font-size: 18px;
+    font-weight: bolder;
+    color: #078cb0;
+}
+
+.footerLeftSection{
+    width: 80vw;
+    padding: 20px 5px;
+}
+
+.footerRightSection{
+    padding: 15px 25px 25px 55px;
+}
+
+.viewDetails{
+    font-weight: 700;
+    color: cyan;
+    cursor: pointer;
+}
+
+.viewBasicDetail{
+    font-weight: 700;
+    color: cyan;
+    cursor: pointer;
+    padding: 5px;
+}
+
+@media only screen and (max-width: 768px) {
+    .cardContainer{
+       margin-top: 25px;
+       margin-bottom: 25px;
+    }
+    .rowContainerOne{
+        display: flex;
+        flex-direction: column;
+    }
+    .rowContainerThree{
+        display: flex;
+        flex-direction: column;        
+    }
+    .sectionOne{
+        width: 100vw;
+        padding-top: 15px;
+    }
+    .sectionTwo{
+        width: 100vw;
+        padding-top: 5px;
+        padding-bottom: 5px;
+    }
+    .sectionThree{
+        width: auto;
+        padding: 2px;
+        padding-top: 5px;
+    }
+    .footerRightSection{
+        padding: 5px;
+    }
+  }

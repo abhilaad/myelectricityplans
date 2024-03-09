@@ -1,0 +1,76 @@
+.headerContainer{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    background-color: lightseagreen;
+    padding: 5px;
+}
+
+.rowOne{
+    display: flex;
+    justify-content: space-between;
+}
+
+.rowTwo{
+    padding: 10px 0px;
+}
+
+.leftSection{
+    background-color: blue;
+    color: white;
+    border-radius: 10px;
+    width: auto;
+    padding: 10px;
+}
+
+.leftSectionTitle{
+    padding-right: 10px;
+}
+
+.leftSectionCount{
+    width: 25px;
+    height: 20px;
+    display: inline-block;
+    border-radius: 50%;
+    background-color: white;
+    color: blue;
+    font-weight: bolder;
+    text-align: center;
+    padding: 1px;
+}
+
+.rightSection{
+    display: flex;
+}
+
+.location{
+    font-weight: bolder;
+    font-size: 18px;
+    padding: 10px;
+}
+
+.filterButton{
+    width: auto;
+    background-color: blue;
+    color: white;
+    font-weight: 500;
+    font-size: 18px;
+    border-radius: 10px;
+    padding: 8px 15px 10px 15px;
+    cursor: pointer;
+}
+
+.notificationIcon{
+    width: 15px;
+    height: 15px;
+    display: inline-block;
+    border-radius: 50%;
+    background-color: grey;
+    color: white;
+    font-weight: bolder;
+    text-align: center;
+}
+
+.headerSummary{
+    padding-left: 5px;
+}
