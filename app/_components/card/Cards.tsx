@@ -5,7 +5,7 @@ import ConnectOnlineButton from './ConnectOnlineButton'
 import React, { useState, useEffect } from 'react'
 import Header from '../Header/Header'
 
-interface EleData {
+interface ElectricityData {
     id: Number;
     provider_id: Number;
     expected_annually_bill_amount: Number;
@@ -24,12 +24,14 @@ interface ProviderData {
     logo: string;
 }
 
-const Cards = ({ tokenData }: {tokenData: {token: string, token_expire_time: string} }) => {
-    const [electricityPLans, setElectricityPlans] = useState<EleData[]>([])
+const Cards = ({ tokenData }: {tokenData: {token: string, token_expire_time: string} }) => {    
+    const [electricityPLans, setElectricityPlans] = useState<ElectricityData[]>([])
     const [providersData, setProviders] = useState<ProviderData[]>([])
     const [isLoading, setLoading] = useState(true)
+    const [mainData, setMainData] = useState<Record<string,any>>({})
 
     useEffect(() => {
+        // storing token and expire time in localStorage that comes through server side token api 
         if (tokenData) {
             const expireTime = new Date(tokenData?.token_expire_time)
             const millis = expireTime.getTime().toString()
@@ -41,6 +43,36 @@ const Cards = ({ tokenData }: {tokenData: {token: string, token_expire_time: str
     useEffect(() => {
         callPlanApi()
     }, [])
+
+    useEffect(()=>{
+        // extracting only the necessary data that is required to show in the UI
+        // Assumption made here is for electricity and providers data
+        if(Object.keys(mainData)?.length){
+            let eArr = []
+            let pArr = []
+            for(const key in mainData?.All_plans?.electricity){
+                eArr.push({id: mainData?.All_plans?.electricity[key]?.id,
+                provider_id: mainData?.All_plans?.electricity[key]?.provider_id,
+                expected_annually_bill_amount: mainData?.All_plans?.electricity[key]?.expected_annually_bill_amount,
+                expected_monthly_bill_amount: mainData?.All_plans?.electricity[key]?.expected_monthly_bill_amount,
+                plan_name: mainData?.All_plans?.electricity[key]?.plan_name,
+                show_annually_desc: mainData?.All_plans?.electricity[key]?.show_annually_desc,
+                view_benefit: mainData?.All_plans?.electricity[key]?.view_benefit,
+                view_bonus: mainData?.All_plans?.electricity[key]?.view_bonus,
+                view_contract: mainData?.All_plans?.electricity[key]?.view_contract,
+                view_discount: mainData?.All_plans?.electricity[key]?.view_discount,
+                view_exit_fee: mainData?.All_plans?.electricity[key]?.view_exit_fee
+                })
+            }
+            for(const key in mainData?.providers){
+                pArr.push({user_id: mainData?.providers[key]?.user_id,
+                logo: mainData?.providers[key]?.logo
+                })
+            }                        
+            setElectricityPlans(eArr)                        
+            setProviders(pArr)            
+        }
+    },[mainData])
 
     const callPlanApi = async () => {
         const body = {
@@ -56,6 +88,8 @@ const Cards = ({ tokenData }: {tokenData: {token: string, token_expire_time: str
             "gas_bill": 0,
         }
         if (Number(localStorage.getItem("expireMillis")) - Date.now() < 0) {
+            // this is the case when token expires (assuming the expire time of token is IST based)
+            // calling first token api then plan data api
             try{
                 const tokenRes = await fetch("/api/getToken", {
                     method: "POST"
@@ -72,42 +106,17 @@ const Cards = ({ tokenData }: {tokenData: {token: string, token_expire_time: str
                     },
                     body: JSON.stringify(body)
                 }).then((res) => res.json()).then((resp) => {
-                    let eArr = []
-                    let pArr = []
-                    for(const key in resp?.data?.All_plans?.electricity){
-                        eArr.push({id: resp?.data?.All_plans?.electricity[key]?.id,
-                            provider_id: resp?.data?.All_plans?.electricity[key]?.provider_id,
-                            expected_annually_bill_amount: resp?.data?.All_plans?.electricity[key]?.expected_annually_bill_amount,
-                            expected_monthly_bill_amount: resp?.data?.All_plans?.electricity[key]?.expected_monthly_bill_amount,
-                            plan_name: resp?.data?.All_plans?.electricity[key]?.plan_name,
-                            show_annually_desc: resp?.data?.All_plans?.electricity[key]?.show_annually_desc,
-                            view_benefit: resp?.data?.All_plans?.electricity[key]?.view_benefit,
-                            view_bonus: resp?.data?.All_plans?.electricity[key]?.view_bonus,
-                            view_contract: resp?.data?.All_plans?.electricity[key]?.view_contract,
-                            view_discount: resp?.data?.All_plans?.electricity[key]?.view_discount,
-                            view_exit_fee: resp?.data?.All_plans?.electricity[key]?.view_exit_fee
-                        })
-                    }
-                    for(const key in resp?.data?.providers){
-                        pArr.push({user_id: resp?.data?.providers[key]?.user_id,
-                            logo: resp?.data?.providers[key]?.logo
-                        })
-                    }
-                    
-                    setElectricityPlans(eArr)
-                    
-                    setProviders(pArr)
-                    setLoading(false)
-                        
+                    if(resp?.data){
+                        setMainData(resp?.data)
+                    }                    
+                    setLoading(false)                        
                 })
             }
             catch(err){                
                 setLoading(false)                
             }
-
         }
-        else {
-            
+        else {            
             try{
                 await fetch('/api/getPlans', {
                     method: "POST",
@@ -118,32 +127,10 @@ const Cards = ({ tokenData }: {tokenData: {token: string, token_expire_time: str
                     },
                     body: JSON.stringify(body)
                 }).then((res) => res.json()).then((resp) => {
-                        let eArr = []
-                        let pArr = []
-                        for(const key in resp?.data?.All_plans?.electricity){
-                            eArr.push({id: resp?.data?.All_plans?.electricity[key]?.id,
-                                provider_id: resp?.data?.All_plans?.electricity[key]?.provider_id,
-                                expected_annually_bill_amount: resp?.data?.All_plans?.electricity[key]?.expected_annually_bill_amount,
-                                expected_monthly_bill_amount: resp?.data?.All_plans?.electricity[key]?.expected_monthly_bill_amount,
-                                plan_name: resp?.data?.All_plans?.electricity[key]?.plan_name,
-                                show_annually_desc: resp?.data?.All_plans?.electricity[key]?.show_annually_desc,
-                                view_benefit: resp?.data?.All_plans?.electricity[key]?.view_benefit,
-                                view_bonus: resp?.data?.All_plans?.electricity[key]?.view_bonus,
-                                view_contract: resp?.data?.All_plans?.electricity[key]?.view_contract,
-                                view_discount: resp?.data?.All_plans?.electricity[key]?.view_discount,
-                                view_exit_fee: resp?.data?.All_plans?.electricity[key]?.view_exit_fee
-                            })
-                        }
-                        for(const key in resp?.data?.providers){
-                            pArr.push({user_id: resp?.data?.providers[key]?.user_id,
-                                logo: resp?.data?.providers[key]?.logo
-                            })
-                        }
-                        
-                        setElectricityPlans(eArr)
-                        
-                        setProviders(pArr)
-                        setLoading(false)
+                    if(resp?.data){
+                        setMainData(resp?.data)
+                    }                       
+                    setLoading(false)
                 })
             }
             catch(err){
@@ -155,8 +142,10 @@ const Cards = ({ tokenData }: {tokenData: {token: string, token_expire_time: str
     return (
         <>
         {isLoading ? <div className={styles.shimmer}>Loading...</div> : <Header totalLength={electricityPLans.length} />}                
-         {electricityPLans?.length && providersData?.length > 0 ? electricityPLans.map((item,ind)=>{
+         {electricityPLans?.length && providersData?.length > 0 ? electricityPLans.map((item)=>{
+            // extracting logo for the items based on respective providers
             const imageLogo: string | undefined = providersData?.find((ele)=> ele?.user_id === item?.provider_id)?.logo
+            // removing p tag from below strings
             const viewBenefit = item.view_benefit?.replace(/<\/?p>/g, '')
             const viewBonus = item.view_bonus?.replace(/<\/?p>/g, '')
             const viewContract = item.view_contract?.replace(/<\/?p>/g, '')
@@ -184,8 +173,7 @@ const Cards = ({ tokenData }: {tokenData: {token: string, token_expire_time: str
                         </div>
                         <div className={styles.viewBasicDetail}>
                             Basic Plan Information Document
-                        </div>
-    
+                        </div>    
                     </div>
     
                     <div className={styles.sectionTwo}>
@@ -200,11 +188,8 @@ const Cards = ({ tokenData }: {tokenData: {token: string, token_expire_time: str
                                     {ele?.length ? <li className={styles.textWrapper}><Image src='/check-solid.svg' alt='check' width={20} height={14} />{ele}</li> : null }
                                     </React.Fragment>)
                                 })}
-                                {/* {viewBenefit?.length ? <li className={styles.textWrapper}><Image src='/check-solid.svg' alt='check' width={20} height={14} />{viewBenefit}</li>: null}
-                                {viewBonus?.length ? <li className={styles.textWrapper}><Image src='/check-solid.svg' alt='check' width={20} height={14} />{viewBonus}</li>: null}
-                                {viewContract?.length ? <li className={styles.textWrapper}><Image src='/check-solid.svg' alt='check' width={20} height={14} />{viewContract}</li>: null}
-                                {viewDiscount?.length ? <li className={styles.textWrapper}><Image src='/check-solid.svg' alt='check' width={20} height={14} />{viewDiscount}</li>: null}
-                                {viewExitFee?.length ? <li className={styles.textWrapper}><Image src='/check-solid.svg' alt='check' width={20} height={14} />{viewExitFee}</li>: null} */}
+
+                                {/* Below text is static */}                                
                                 <li className={styles.textWrapper}><span style={{ backgroundColor: "#cbf2f2", padding: "3px" }}><Image src='/wallet-solid.svg' alt='wallet' width={20} height={14} /> Standard Feed in Tariff: 5c</span></li>
                             </ul>
                         </div>
@@ -222,19 +207,14 @@ const Cards = ({ tokenData }: {tokenData: {token: string, token_expire_time: str
                             <div className={styles.perMonth}>
                                 ${item?.expected_monthly_bill_amount.toString()}<span style={{color:"grey", fontSize:"12px"}}>/mo</span>
                             </div>
-                        </div>
-    
+                        </div>    
                     </div>
     
-                </div>
-    
-    
+                </div>    
     
                 <div className={styles.rowContainerTwo}>
                     {item.show_annually_desc}
-                </div>
-    
-    
+                </div>   
     
                 <div className={styles.rowContainerThree} >
                     <div className={styles.footerLeftSection}>
@@ -249,8 +229,7 @@ const Cards = ({ tokenData }: {tokenData: {token: string, token_expire_time: str
                     </div>
                     <div className={styles.footerRightSection}>
                         <ConnectOnlineButton />
-                    </div>
-    
+                    </div>    
                 </div>
             </div>)
          })

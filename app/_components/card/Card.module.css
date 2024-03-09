@@ -179,11 +179,11 @@
         flex-direction: column;        
     }
     .sectionOne{
-        width: 100vw;
+        width: 100%;
         padding-top: 15px;
     }
     .sectionTwo{
-        width: 100vw;
+        width: 100%;
         padding-top: 5px;
         padding-bottom: 5px;
     }
