@@ -159,7 +159,7 @@ const Cards = ({ tokenData }: {tokenData: {token: string, token_expire_time: str
 
     return (
         <>
-        {isLoading ? <div className={styles.shimmer}>Loading...</div> : <Header totalLength={electricityPLans.length} />}                
+        {isLoading ? <div className={styles.shimmer}>Loading....</div> : <Header totalLength={electricityPLans.length} />}                
          {electricityPLans?.length && providersData?.length > 0 ? electricityPLans.map((item)=>{
             // extracting logo for the items based on respective providers
             const imageLogo: string | undefined = providersData?.find((ele)=> ele?.user_id === item?.provider_id)?.logo
