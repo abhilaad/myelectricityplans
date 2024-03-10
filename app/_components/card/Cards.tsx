@@ -71,7 +71,7 @@ const Cards = () => {
         window.localStorage.setItem("token", data?.token)
         window.localStorage.setItem("expireMillis", millis)
     }
-    
+
     // function to call when token expires or no token was found in localStorage
     const callTokenApi = async()=>{
         try{            
@@ -97,8 +97,8 @@ const Cards = () => {
             try{
                 await getProductsData(localStorage.getItem("token") as string)
                 .then(async(resp) => {
-                    // token expire case (code === 2006)
-                    if(resp?.code === 2006){
+                    // token expire case (status === false)
+                    if(resp?.status === false){
                         await callTokenApi()
                     }
                     else{
