@@ -30,13 +30,24 @@ const Cards = ({ tokenData }: {tokenData: {token: string, token_expire_time: str
     const [isLoading, setLoading] = useState(true)
     const [mainData, setMainData] = useState<Record<string,any>>({})
 
+    // request body for calling plans API
+    const body = {
+        "post_code": "2000,Barangaroo,NSW",
+        "visit_id": "K3FKRThMV2RXVVVwRlpwVXBNOXBDUT09",
+        "property_type": 1,
+        "life_support": 0,
+        "movin_type": 0,
+        "life_support_value": "",
+        "solar_panel": 1,
+        "energy_type": 3,
+        "electricity_bill": 0,
+        "gas_bill": 0,
+    }
+
     useEffect(() => {
         // storing token and expire time in localStorage that comes through server side token api 
         if (tokenData) {
-            const expireTime = new Date(tokenData?.token_expire_time)
-            const millis = expireTime.getTime().toString()
-            window.localStorage.setItem("token", tokenData?.token)
-            window.localStorage.setItem("expireMillis", millis)
+            storeTokenLocalStorage(tokenData)            
         }
     }, [tokenData])
 
@@ -72,51 +83,49 @@ const Cards = ({ tokenData }: {tokenData: {token: string, token_expire_time: str
             setElectricityPlans(eArr)                        
             setProviders(pArr)            
         }
-    },[mainData])
+    },[mainData])  
+    
+    const storeTokenLocalStorage = (data : {token_expire_time : string, token: string})=>{
+        const expireTime = new Date(data?.token_expire_time)
+        const millis = expireTime.getTime().toString()
+        window.localStorage.setItem("token", data?.token)
+        window.localStorage.setItem("expireMillis", millis)
+    }
 
-    const callPlanApi = async () => {
-        const body = {
-            "post_code": "2000,Barangaroo,NSW",
-            "visit_id": "K3FKRThMV2RXVVVwRlpwVXBNOXBDUT09",
-            "property_type": 1,
-            "life_support": 0,
-            "movin_type": 0,
-            "life_support_value": "",
-            "solar_panel": 1,
-            "energy_type": 3,
-            "electricity_bill": 0,
-            "gas_bill": 0,
+    // function to call when token expires
+    const callTokenApi = async()=>{
+        try{
+            const tokenRes = await fetch("/api/getToken", {
+                method: "POST"
+            })
+            const tokenJson = await tokenRes.json()
+            // function to store token data in localStorage
+            storeTokenLocalStorage(tokenJson?.data)           
+            await fetch('/api/getPlans', {
+                method: "POST",
+                headers: {
+                    "Auth-Token": tokenJson?.data?.token as string,
+                    "Content-Type": "application/json",
+                    "CountryId": "1",
+                    "ServiceId": "1",
+                },
+                body: JSON.stringify(body)
+            }).then((res) => res.json()).then((resp) => {
+                if(resp?.data){
+                    setMainData(resp?.data)
+                }                    
+                setLoading(false)                        
+            })
         }
-        if (Number(localStorage.getItem("expireMillis")) - Date.now() < 0) {
-            // this is the case when token expires (assuming the expire time of token is IST based)
-            // calling first token api then plan data api
-            try{
-                const tokenRes = await fetch("/api/getToken", {
-                    method: "POST"
-                })
-                const tokenJson = await tokenRes.json()                
-                
-                await fetch('/api/getPlans', {
-                    method: "POST",
-                    headers: {
-                        "Auth-Token": tokenJson?.data?.token as string,
-                        "Content-Type": "application/json",
-                        "CountryId": "1",
-                        "ServiceId": "1",
-                    },
-                    body: JSON.stringify(body)
-                }).then((res) => res.json()).then((resp) => {
-                    if(resp?.data){
-                        setMainData(resp?.data)
-                    }                    
-                    setLoading(false)                        
-                })
-            }
-            catch(err){                
-                setLoading(false)                
-            }
-        }
-        else {            
+        catch(err){                
+            setLoading(false)                
+        }        
+    }
+
+    // function to call plans data with the token that got from server
+    const callPlanApi = async () => {   
+        // if token is set to localStorage go to if case to directly call plans Api     
+        if(localStorage.getItem("token")){
             try{
                 await fetch('/api/getPlans', {
                     method: "POST",
@@ -126,16 +135,25 @@ const Cards = ({ tokenData }: {tokenData: {token: string, token_expire_time: str
                         "ServiceId": "1",
                     },
                     body: JSON.stringify(body)
-                }).then((res) => res.json()).then((resp) => {
-                    if(resp?.data){
-                        setMainData(resp?.data)
-                    }                       
-                    setLoading(false)
+                }).then((res) => res.json()).then(async(resp) => {
+                    // token expire case (code === 2006)
+                    if(resp?.code === 2006){
+                        await callTokenApi()
+                    }
+                    else{
+                        if(resp?.data){
+                            setMainData(resp?.data)
+                        }                       
+                        setLoading(false)
+                    }                    
                 })
             }
             catch(err){
                 setLoading(false)                
             }
+        }
+        else{
+            await callTokenApi()
         }
     }    
 
