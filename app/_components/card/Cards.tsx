@@ -24,7 +24,7 @@ interface ProviderData {
     logo: string;
 }
 
-const Cards = ({ tokenData }: {tokenData: {token: string, token_expire_time: string} }) => {    
+const Cards = () => {    
     const [electricityPLans, setElectricityPlans] = useState<ElectricityData[]>([])
     const [providersData, setProviders] = useState<ProviderData[]>([])
     const [isLoading, setLoading] = useState(true)
@@ -44,12 +44,12 @@ const Cards = ({ tokenData }: {tokenData: {token: string, token_expire_time: str
         "gas_bill": 0,
     }
 
-    useEffect(() => {
-        // storing token and expire time in localStorage that comes through server side token api 
-        if (tokenData) {
-            storeTokenLocalStorage(tokenData)            
-        }
-    }, [tokenData])
+    // useEffect(() => {
+    //     // storing token and expire time in localStorage that comes through server side token api 
+    //     // if (tokenData) {
+    //     //     storeTokenLocalStorage(tokenData)            
+    //     // }
+    // }, [tokenData])
 
     useEffect(() => {
         callPlanApi()
@@ -92,7 +92,7 @@ const Cards = ({ tokenData }: {tokenData: {token: string, token_expire_time: str
         window.localStorage.setItem("expireMillis", millis)
     }
 
-    // function to call when token expires
+    // function to call when token expires or no token was found in localStorage
     const callTokenApi = async()=>{
         try{
             const tokenRes = await fetch("/api/getToken", {
@@ -121,8 +121,7 @@ const Cards = ({ tokenData }: {tokenData: {token: string, token_expire_time: str
             setLoading(false)                
         }        
     }
-
-    // function to call plans data with the token that got from server
+    
     const callPlanApi = async () => {   
         // if token is set to localStorage go to if case to directly call plans Api     
         if(localStorage.getItem("token")){
